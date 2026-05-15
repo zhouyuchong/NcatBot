@@ -30,3 +30,13 @@
 | CX-13 | `napcat stop` (Linux) | 调用 `PlatformOps.stop_napcat()` |
 | CX-14 | `napcat stop` (非 Linux) | 拒绝执行并返回非 0 |
 | CX-15 | CLI 行编辑初始化 | CLI 入口初始化 readline 并修补 Click 整行 prompt，保证 `click.prompt` 可处理左右键且不发生提示词错位 |
+
+### SnowLuma CLI (`test_snowluma_cli.py`)
+
+| 规范 ID | 说明 | 验证点 |
+|---------|------|--------|
+| CX-16 | `snowluma --help` | 一级命令帮助可正常退出 |
+| CX-17 | `snowluma diagnose --help` | 诊断子命令帮助可正常退出 |
+| CX-18 | `snowluma diagnose ws` | `--uri` / `--token` 传入 `_check_ws()` |
+| CX-19 | `snowluma stop` (Linux) | 调用 `PlatformOps.stop_snowluma()` |
+| CX-20 | `snowluma install --yes` | `--yes` 绑定到 `SnowLumaInstaller.install(skip_confirm=True)` |

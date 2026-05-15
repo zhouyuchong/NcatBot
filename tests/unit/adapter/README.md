@@ -37,6 +37,17 @@ python -m pytest tests/unit/adapter/ -v
 | AR-04 | `create()` platform 覆盖 | `platform` 参数覆盖默认值 |
 | AR-05 | 未知类型 | 抛 `ValueError` |
 
+### SnowLumaAdapter (`test_snowluma_adapter.py`)
+
+测试 SnowLuma 适配器的内置注册、配置模型与 CLI 配置钩子。
+
+| 规范 ID | 说明 | 验证点 |
+|---------|------|--------|
+| SL-01 | 内置注册 | `adapter_registry.discover()` 包含 `snowluma` |
+| SL-02 | `SnowLumaConfig` 规范化 | 自动补全 `ws://` / `http://`，并正确拼接 `access_token` |
+| SL-03 | `cli_configure()` 自动安装分支 | 调用安装钩子、跳过手动输入、返回默认连接参数 |
+| SL-04 | `cli_configure()` 手动分支 | 采集 `ws_uri` / `ws_token` / `webui_uri` / `skip_setup` |
+
 ### BiliEventParser (`test_bilibili_parser.py`)
 
 测试 Bilibili 三路由解析器（直播/私信/评论）。

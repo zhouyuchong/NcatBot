@@ -13,9 +13,9 @@ tests/
 │   ├── core/          # 核心分发与注册 + 谓词 (D-01 ~ D-09, K-01 ~ K-21, H-01 ~ H-11, R-01 ~ R-09, PR-01 ~ PR-06)
 │   ├── service/       # 服务管理 + RBAC + 调度 (SM-01 ~ SM-08, SC-01 ~ SC-12, TS-01 ~ TS-06)
 │   ├── plugin/        # 插件 Mixin + 导入去重 + Loader (M-01 ~ M-41, ID-01 ~ ID-02, LD-01 ~ LD-05)
-│   ├── adapter/       # 适配器解析 + 注册表 + 真实数据 + 事件日志格式 (P-01 ~ P-07, RF-01 ~ RF-08, AR-01 ~ AR-05, GM-01 ~ GM-05, BL-01 ~ BL-25, GH-01 ~ GH-11, LK-01 ~ LK-09, LKP-01 ~ LKP-10, ELS-01 ~ ELS-17)
+│   ├── adapter/       # 适配器解析 + 注册表 + 真实数据 + 事件日志格式 (P-01 ~ P-07, RF-01 ~ RF-08, AR-01 ~ AR-05, SL-01 ~ SL-04, GM-01 ~ GM-05, BL-01 ~ BL-25, GH-01 ~ GH-11, LK-01 ~ LK-09, LKP-01 ~ LKP-10, ELS-01 ~ ELS-17)
 │   ├── config/        # 配置迁移 + 安全 + 分层 + 事件日志格式 (CF-01 ~ CF-05, CS-01 ~ CS-05, CE-01 ~ CE-05, BQ-01 ~ BQ-11, AI-03 ~ AI-20, ELF-01 ~ ELF-06)
-│   ├── cli/           # CLI 冒烟 (CX-01 ~ CX-15)
+│   ├── cli/           # CLI 冒烟 (CX-01 ~ CX-20)
 │   └── webui/         # WebUI 单元测试 (WUI-01 ~ WUI-14)
 ├── integration/       # 集成测试 (I-01 ~ I-21, WUI-I-01 ~ WUI-I-04)
 ├── e2e/               # 端到端测试
@@ -71,7 +71,8 @@ python tests/e2e/napcat/run.py
 | AR | AdapterRegistry | AR-01 ~ AR-05 |
 | CF | Config Migration | CF-01 ~ CF-05 |
 | CE | Config 分层与运行时覆盖 | CE-01 ~ CE-05 |
-| CX | CLI 冒烟 | CX-01 ~ CX-15 |
+| CX | CLI 冒烟 | CX-01 ~ CX-20 |
+| SL | SnowLuma 适配器 / 配置 | SL-01 ~ SL-04 |
 | D | AsyncEventDispatcher | D-01 ~ D-09 |
 | K | Hook System | K-01 ~ K-22 |
 | H | HandlerDispatcher | H-01 ~ H-11 |
