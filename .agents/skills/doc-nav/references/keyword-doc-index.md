@@ -18,6 +18,7 @@
 | 定时任务、Schedule | `reference/6. 服务层/2. 配置任务服务.md` |
 | 测试、Test、Harness | `guide/9. 测试指南/README.md` |
 | 多平台、跨平台、适配器、platform | `guide/10. 多平台开发/README.md` |
+| SnowLuma、OneBot v11、WebUI 5099、ws_token 1403 | `guide/2. 适配器/7. SnowLuma QQ.md` |
 | GitHub、Webhook、Polling、Issue、PR | `guide/5. API 使用/4. GitHub/README.md` |
 | GitHub 事件、GitHubIssueEvent、GitHubPREvent | `reference/2. 事件类型/4. GitHub 事件.md` |
 | GitHub API、GitHubBotAPI | `reference/1. Bot API/4. GitHub/1. API.md` |

@@ -25,6 +25,7 @@
 | 测试框架问题 | testing | `guide/9. 测试指南/README.md` |
 | 平台适配器找不到/不工作 | adapter | `guide/2. 适配器/README.md` → 对应平台指南 |
 | QQ 登录失败 / WebUI 连接不上 | adapter/napcat/setup | `guide/2. 适配器/1. NapCat QQ.md` |
+| SnowLuma 连接失败 / WebUI 能开但 WS 不通 / `retcode=1403` | adapter/snowluma/setup | `guide/2. 适配器/7. SnowLuma QQ.md` |
 | Bilibili 扫码登录失败 / 凭据失效 | adapter/bilibili/auth | `guide/2. 适配器/2. Bilibili.md` |
 | GitHub Token 验证失败 / Webhook 不触发 | adapter/github | `guide/2. 适配器/3. GitHub.md` |
 | QQ 专用类型/段错误 | types/qq | `reference/3. 数据类型/README.md` |

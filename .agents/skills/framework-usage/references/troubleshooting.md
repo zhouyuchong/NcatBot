@@ -8,6 +8,7 @@
 ncatbot config check              # 一键检查配置
 ncatbot config show               # 查看完整配置
 ncatbot config get napcat.ws_uri  # 查看特定项
+ncatbot snowluma diagnose         # 诊断 SnowLuma WebSocket / WebUI
 ncatbot dev                       # 调试模式 + 热重载
 ```
 
@@ -71,6 +72,28 @@ napcat:
   ws_token: napcat_ws
   ws_listen_ip: localhost
 ```
+
+### SnowLuma 连接
+
+```yaml
+adapters:
+  - type: snowluma
+    platform: qq
+    enabled: true
+    config:
+      ws_uri: ws://localhost:3001
+      ws_token: ""
+      webui_uri: http://localhost:5099
+      skip_setup: true
+```
+
+排查顺序：
+
+1. `ncatbot snowluma diagnose ws` 检查 OneBot v11 WebSocket
+2. `ncatbot snowluma diagnose webui` 检查 WebUI 可达性
+3. 确认已在 SnowLuma WebUI 中启用 OneBot v11 WebSocket 端点
+4. 若报 `retcode=1403`，说明 `ws_token` 与 WebUI 中配置不一致
+5. 若使用 Linux / macOS，请确认 `skip_setup: true`，并由外部进程手动管理 SnowLuma
 
 ### 插件
 

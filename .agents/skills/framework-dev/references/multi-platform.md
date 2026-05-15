@@ -34,4 +34,4 @@
 | `event` | `event.qq`, `event.bilibili`, `event.github`, `event.lark`, `event.common` |
 | `types` | `types.qq`, `types.bilibili`, `types.github`, `types.lark`, `types.common`, `types.napcat` |
 | `api` | `api.qq`, `api.bilibili`, `api.github`, `api.traits` |
-| `adapter` | `adapter.napcat`, `adapter.mock`, `adapter.bilibili`, `adapter.github`, `adapter.lark` |
+| `adapter` | `adapter.napcat`, `adapter.snowluma`, `adapter.mock`, `adapter.bilibili`, `adapter.github`, `adapter.lark` |

@@ -7,12 +7,15 @@
 | 平台 | 认证方式 | 指南 |
 |------|---------|------|
 | QQ (NapCat) | WebUI 扫码 / 快速登录 | `docs/docs/notes/guide/2. 适配器/1. NapCat QQ.md` |
+| QQ (SnowLuma) | WebUI 手动启用 OneBot v11 + 扫码登录 | `docs/docs/notes/guide/2. 适配器/7. SnowLuma QQ.md` |
 | Bilibili | 终端扫码（sessdata 留空自动弹码） | `docs/docs/notes/guide/2. 适配器/2. Bilibili.md` |
 | GitHub | Personal Access Token | `docs/docs/notes/guide/2. 适配器/3. GitHub.md` |
 | 飞书 (Lark) | App ID + App Secret | config.yaml 配置 `app_id` / `app_secret` |
 | Mock | 无需认证 | `docs/docs/notes/guide/2. 适配器/4. Mock 适配器.md` |
 
 > QQ (NapCat) 首次启动时由 NcatBot 自动安装，无需手动配置。启动后通过 WebUI 扫码登录。CLI `ncatbot init` 选择自动安装时跳过 WS/WebUI 地址输入。
+
+> QQ (SnowLuma) 协议层与 NapCat 兼容，但首次运行需要你在 SnowLuma WebUI 手动启用 OneBot v11 WebSocket 端点。自动安装 / 自动启动当前仅完整支持 Windows x64。
 
 > Bilibili 适配器支持扫码登录：config.yaml 中 `sessdata` 留空即可在启动时自动弹出二维码，扫码后凭据自动写回配置文件。CLI 初始化时选择扫码可跳过 sessdata 等手动输入。
 
@@ -31,6 +34,24 @@ bot.run()
 ```
 
 每个适配器的 `platform` 必须唯一，重复会抛 `ValueError`。
+
+> `NapCatAdapter` 和 `SnowLumaAdapter` 都使用 `platform="qq"`，同一个 `BotClient` 里只能启用其中一个。
+
+### SnowLuma 适配器配置
+
+```yaml
+adapters:
+    - type: snowluma
+        platform: qq
+        enabled: true
+        config:
+            ws_uri: ws://localhost:3001
+            ws_token: ""
+            webui_uri: http://localhost:5099
+            skip_setup: false
+```
+
+`skip_setup: false` 表示 Setup 模式：NcatBot 会按需下载并启动 SnowLuma，然后等待你在 WebUI 完成 OneBot v11 配置和扫码登录。若 SnowLuma 已由外部进程管理，改用 `skip_setup: true`。
 
 ### GitHub 适配器配置
 

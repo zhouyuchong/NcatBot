@@ -32,6 +32,7 @@ ncatbot init    # 交互式创建 config.yaml + plugins/ + 模板插件
 `ncatbot init` 支持多适配器 checkbox 选择，各适配器的 `cli_configure()` 钩子含智能跳过逻辑：
 
 - **NapCat**：选择自动安装时跳过 WS/WebUI 地址输入（启动时自动配置）
+- **SnowLuma**：选择自动安装时跳过 WS/WebUI 地址输入，返回默认连接参数；首次启动仍需在 WebUI 手动启用 OneBot v11
 - **Bilibili**：选择扫码登录时跳过 sessdata 等凭据手动输入（扫码自动获取）
 
 ### 方式 2：手动创建
@@ -129,8 +130,13 @@ if __name__ == "__main__":
 | `ncatbot config check` | 一键检查配置有效性 |
 | `ncatbot napcat install [--yes]` | 安装 NapCat + QQ（`--yes` 跳过确认，Docker/CI 用） |
 | `ncatbot napcat diagnose` | 连接诊断 |
+| `ncatbot snowluma install [--yes] [--lite]` | 安装 SnowLuma（当前主要面向 Windows x64） |
+| `ncatbot snowluma diagnose` | 诊断 SnowLuma 的 WebSocket / WebUI |
+| `ncatbot snowluma version` | 查看已安装版本与最新 release |
 
 > ⚠️ **NapCat 自动安装说明**：NapCat 由 NcatBot Setup 模式（首次 `ncatbot run` 或 `ncatbot dev`）自动安装，无需手动安装。`ncatbot napcat install --yes` 仅用于 CI/Docker 等无交互环境。启动后通过 WebUI 扫码登录 QQ。
+
+> ⚠️ **SnowLuma 使用说明**：SnowLuma 同样提供 Setup / Connect 两种模式，但首次运行仍需要你在 SnowLuma WebUI 中手动启用 OneBot v11 WebSocket 并扫码登录。自动安装 / 自动启动当前仅完整支持 Windows x64；Linux / macOS 请使用 `skip_setup: true` 手动管理。
 
 ### CLI 交互式命令注意事项
 

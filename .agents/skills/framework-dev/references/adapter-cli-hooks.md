@@ -13,6 +13,7 @@
 | 适配器 | 文件 | 方法 |
 |--------|------|------|
 | NapCat | `ncatbot/adapter/napcat/adapter.py` | `NapCatAdapter.cli_configure()` |
+| SnowLuma | `ncatbot/adapter/snowluma/adapter.py` | `SnowLumaAdapter.cli_configure()` |
 | Bilibili | `ncatbot/adapter/bilibili/adapter.py` | `BilibiliAdapter.cli_configure()` |
 | GitHub | `ncatbot/adapter/github/adapter.py` | `GitHubAdapter.cli_configure()` |
 | Lark | `ncatbot/adapter/lark/adapter.py` | `LarkAdapter.cli_configure()` |
@@ -31,6 +32,16 @@
 ```
 
 设计原理：自动安装时，NapCat 由框架本地管理，`NapCatLauncher` 启动前调用 `NapCatConfigManager.configure_all()` 写入正确的 WS/WebUI 配置，因此 CLI 阶段无需用户手动输入。
+
+### SnowLuma
+
+```text
+询问自动安装?
+  ├─ Yes → 执行安装 → 直接返回默认值（ws/webui）
+  └─ No  → 逐项交互输入 ws_uri / ws_token / webui_uri / skip_setup
+```
+
+设计原理：SnowLuma 与 NapCat 同为 OneBot v11 协议端，但其 WebUI API 路由当前未公开，框架无法像 NapCat 那样在 CLI 阶段自动写入 OneBot 配置。因此自动安装只负责准备运行时，首次启动后仍需用户手动进入 WebUI 启用 OneBot v11 WebSocket 并扫码登录。
 
 ### Bilibili
 

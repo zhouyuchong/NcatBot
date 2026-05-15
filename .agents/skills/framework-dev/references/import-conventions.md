@@ -36,7 +36,7 @@ from ncatbot.event.qq.message import GroupMessageEvent
 | `event` | `event.qq`, `event.bilibili`, `event.github`, `event.common` | `GroupMessageEvent`, `BiliLiveEvent` |
 | `types` | `types.qq`, `types.bilibili`, `types.github`, `types.common`, `types.napcat` | `ForwardConstructor`, `GitHubSender` |
 | `api` | `api.qq`, `api.bilibili`, `api.github`, `api.ai`, `api.traits` | `QQAPIClient`, `IMessaging` |
-| `adapter` | `adapter.napcat`, `adapter.mock`, `adapter.bilibili`, `adapter.github`, `adapter.ai` | `NapCatAdapter`, `MockAdapter` |
+| `adapter` | `adapter.napcat`, `adapter.snowluma`, `adapter.mock`, `adapter.bilibili`, `adapter.github`, `adapter.ai` | `NapCatAdapter`, `SnowLumaAdapter` |
 
 其他 layer（`core`、`plugin`、`utils`、`app`、`service`、`cli`、`testing`）**只允许一级导入**。
 
