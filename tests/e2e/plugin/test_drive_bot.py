@@ -11,6 +11,8 @@ drive_bot 插件离线测试
   PL-60: JM crawler 返回多个 PDF 文件
   PL-61: JM 章节 PDF 命名包含 album id / 漫画名 / 章节序号
   PL-62: 群聊 at 机器人询问使用方法 → 去掉 at 段后返回使用说明
+  PL-63: 未知私聊消息 → AI 兜底回复
+  PL-64: 已有关键词命中 → 不调用 AI 兜底
 """
 
 from __future__ import annotations
@@ -188,6 +190,54 @@ async def test_group_usage_question_after_at_returns_usage_text(drive_plugins_di
 
         h.assert_api("send_group_msg").called().with_params(
             group_id="1019587647"
+        ).with_text("Drive Bot 使用方法", "/jm 关键词", "/jm 数字ID", "每日新闻")
+
+
+async def test_private_unknown_message_uses_ai_fallback(drive_plugins_dir, monkeypatch):
+    """PL-63: 未知私聊消息命中 AI 兜底，而不是返回固定无法理解文本"""
+    ai_module = importlib.import_module("ncatbot.adapter.ai.api.bot_api")
+    monkeypatch.setenv("DRIVE_BOT_AI_API_KEY", "env-test-key")
+
+    async def fake_chat_text(self, content_or_messages, **kwargs):
+        assert content_or_messages[-1] == {
+            "role": "user",
+            "content": "今天适合干什么",
+        }
+        assert kwargs["api_base"] == "https://api.deepseek.com"
+        assert kwargs["api_key"] == "env-test-key"
+        assert kwargs["model"] == "openai/deepseek-v4-flash"
+        return "可以先喝水，再写一点代码。"
+
+    monkeypatch.setattr(ai_module.AIBotAPI, "chat_text", fake_chat_text)
+
+    async with PluginTestHarness(
+        plugin_names=[PLUGIN_NAME], plugins_dir=drive_plugins_dir
+    ) as h:
+        await h.inject(private_message("今天适合干什么", user_id=USER_ID))
+        await h.settle(0.1)
+
+        h.assert_api("send_private_msg").called().with_params(
+            user_id=USER_ID
+        ).with_text("可以先喝水，再写一点代码。")
+
+
+async def test_private_keyword_match_skips_ai_fallback(drive_plugins_dir, monkeypatch):
+    """PL-64: 使用方法等已有关键词命中时不调用 AI 兜底"""
+    async with PluginTestHarness(
+        plugin_names=[PLUGIN_NAME], plugins_dir=drive_plugins_dir
+    ) as h:
+        plugin = h.get_plugin(PLUGIN_NAME)
+
+        async def fail_if_called(prompt: str) -> str:
+            raise AssertionError(f"AI fallback should not be called: {prompt}")
+
+        monkeypatch.setattr(plugin, "_ask_ai", fail_if_called, raising=False)
+
+        await h.inject(private_message("使用方法", user_id=USER_ID))
+        await h.settle(0.1)
+
+        h.assert_api("send_private_msg").called().with_params(
+            user_id=USER_ID
         ).with_text("Drive Bot 使用方法", "/jm 关键词", "/jm 数字ID", "每日新闻")
 
 

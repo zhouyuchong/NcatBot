@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import os
+from pathlib import Path
 from typing import Any, Dict, Optional
 
 import yaml
@@ -42,6 +43,7 @@ class ConfigStorage:
 
     def load(self) -> Config:
         _log.debug("加载配置文件: %s", self.path)
+        _load_dotenv(self.path)
         raw = self._load_raw()
         self._raw_snapshot = copy.deepcopy(raw) if isinstance(raw, dict) else {}
         data, self._env_only_bot_uin, self._env_only_root = self._apply_env_layer(
@@ -111,3 +113,46 @@ class ConfigStorage:
             yaml.dump(data, f, allow_unicode=True, default_flow_style=False)
         os.replace(tmp_path, self.path)
         _log.debug("配置文件已保存: %s", self.path)
+
+
+def _load_dotenv(config_path: str) -> None:
+    """加载 .env 中的 NCATBOT_* 配置，不覆盖已存在的进程环境变量。"""
+    dotenv_path = os.getenv("NCATBOT_DOTENV_PATH", os.path.join(os.getcwd(), ".env"))
+    candidates = [Path(dotenv_path)]
+    config_dir_env = Path(config_path).expanduser().resolve().parent / ".env"
+    if config_dir_env not in candidates:
+        candidates.append(config_dir_env)
+
+    for path in candidates:
+        if path.is_file():
+            _apply_dotenv_file(path)
+            return
+
+
+def _apply_dotenv_file(path: Path) -> None:
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError as exc:
+        _log.warning("读取 .env 失败: %s", exc)
+        return
+
+    for line in lines:
+        parsed = _parse_dotenv_line(line)
+        if parsed is None:
+            continue
+        key, value = parsed
+        os.environ.setdefault(key, value)
+
+
+def _parse_dotenv_line(line: str) -> tuple[str, str] | None:
+    text = line.strip()
+    if not text or text.startswith("#") or "=" not in text:
+        return None
+    key, value = text.split("=", 1)
+    key = key.strip()
+    if not key:
+        return None
+    value = value.strip()
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in ("'", '"'):
+        value = value[1:-1]
+    return key, value

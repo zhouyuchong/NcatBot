@@ -46,6 +46,28 @@ def test_env_bot_uin_when_key_absent(tmp_path, monkeypatch):
     assert st._env_only_bot_uin is True
 
 
+def test_dotenv_supplies_bot_uin_and_root_when_yaml_absent(tmp_path, monkeypatch):
+    """.env 文件可提供 NCATBOT_BOT_UIN / NCATBOT_ROOT，且标记为 env-only。"""
+    p = tmp_path / "c.yaml"
+    p.write_text("{}", encoding="utf-8")
+    env_path = tmp_path / ".env"
+    env_path.write_text(
+        "NCATBOT_BOT_UIN=1706895031\nNCATBOT_ROOT=1620404337\n",
+        encoding="utf-8",
+    )
+    monkeypatch.delenv("NCATBOT_BOT_UIN", raising=False)
+    monkeypatch.delenv("NCATBOT_ROOT", raising=False)
+    monkeypatch.setenv("NCATBOT_DOTENV_PATH", str(env_path))
+    monkeypatch.setenv("NCATBOT_CONFIG_PATH", str(p))
+
+    st = ConfigStorage(str(p))
+    cfg = st.load()
+    assert cfg.bot_uin == "1706895031"
+    assert cfg.root == "1620404337"
+    assert st._env_only_bot_uin is True
+    assert st._env_only_root is True
+
+
 def test_save_does_not_persist_env_only_bot_uin(tmp_path, monkeypatch):
     """CE-03: save 合并写盘时不将仅来自 env 的 bot_uin 写入 yaml"""
     p = tmp_path / "c.yaml"

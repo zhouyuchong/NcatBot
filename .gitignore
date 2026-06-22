@@ -58,6 +58,7 @@ logs/
 /napcat
 /snowluma
 config.yaml
+.env
 
 # === Development ===
 dev/
