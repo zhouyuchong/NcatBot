@@ -46,7 +46,6 @@ ncatbot ref --trae       # Trae
 ```
 your-project/
 ├── .agents/skills/          ← AI Agent 技能文件（framework-usage / testing 等）
-├── .env.example             ← 环境变量示例（复制为 .env 后填写真实值）
 ├── docs/
 │   └── docs/
 │       ├── examples/        ← 示例代码（qq / github / cross_platform …）
@@ -67,7 +66,7 @@ ncatbot init
 
 按提示输入机器人 QQ 号和管理员 QQ 号，CLI 会自动生成 `config.yaml` 和一个以你计算机用户名命名的模板插件。该模板插件的功能是：在群聊或私聊中发送 `hello` 时，机器人回复 `hi`。
 
-也可以复制 `.env.example` 为 `.env`，通过 `NCATBOT_BOT_UIN` 和 `NCATBOT_ROOT` 提供机器人 QQ 号和管理员 QQ 号；`.env` 不应提交到仓库。
+也可以复制 `code/.env.example` 为 `code/.env`，通过 `NCATBOT_BOT_UIN` 和 `NCATBOT_ROOT` 提供机器人 QQ 号和管理员 QQ 号；`.env` 不应提交到仓库。
 
 ### 4. 启动
 

@@ -2,7 +2,7 @@
 
 Drive Bot 支持在 QQ 群聊和私聊中处理资源搜索、文件上传和每日新闻。
 
-当消息没有命中下方已有关键词/命令时，Bot 会使用 OpenAI-compatible Chat Completion 做兜底回复。推荐复制仓库根目录的 `.env.example` 为 `.env` 并填写：
+当消息没有命中下方已有关键词/命令时，Bot 会使用 OpenAI-compatible Chat Completion 做兜底回复。推荐复制 `code/.env.example` 为 `code/.env` 并填写：
 
 ```dotenv
 DRIVE_BOT_AI_API_KEY=fake-api-key

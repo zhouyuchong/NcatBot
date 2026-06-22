@@ -4,13 +4,6 @@ main = "plugin.py"
 author = "damonzzz"
 description = "Drive group helper migrated from code/main.py"
 entry_class = "DriveBotPlugin"
-pip_dependencies = [
-  "jmcomic",
-  "img2pdf",
-  "Pillow",
-  "requests",
-  "aiohttp",
-  "litellm>=1.83.0",
-]
+pip_dependencies = { jmcomic = "", img2pdf = "", Pillow = "", requests = "", aiohttp = "", litellm = ">=1.83.0" }
 
 [dependencies]

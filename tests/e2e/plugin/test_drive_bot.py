@@ -24,6 +24,7 @@ from pathlib import Path
 
 import pytest
 
+from ncatbot.plugin.manifest import PluginManifest
 from ncatbot.testing import PluginTestHarness
 from ncatbot.testing.factories.qq import group_message, private_message
 
@@ -50,7 +51,10 @@ def test_drive_bot_declares_litellm_dependency(drive_plugins_dir):
     """PL-65: manifest.toml 和 code/requirements.txt 均声明 AI 兜底所需 litellm"""
     plugin_dir = drive_plugins_dir / PLUGIN_NAME
     manifest = tomllib.loads((plugin_dir / "manifest.toml").read_text(encoding="utf-8"))
-    assert any(dep.startswith("litellm") for dep in manifest["pip_dependencies"])
+    assert manifest["pip_dependencies"]["litellm"] == ">=1.83.0"
+
+    parsed_manifest = PluginManifest.from_toml(plugin_dir / "manifest.toml")
+    assert parsed_manifest.pip_dependencies["litellm"] == ">=1.83.0"
 
     requirements = (
         Path(__file__).resolve().parents[3] / "code" / "requirements.txt"
