@@ -4,6 +4,9 @@ drive_bot 插件离线测试
 规范:
   PL-54: 私聊每日新闻 → 私聊图片回复
   PL-55: 私聊文件结果 → upload_private_file + 私聊文本回复
+  PL-56: 私聊询问使用方法 → 返回使用说明
+  PL-57: JM 下载失败 → 返回错误提示
+  PL-58: JM 下载完成但 PDF 缺失 → 抛出明确错误
 """
 
 from __future__ import annotations
@@ -102,3 +105,63 @@ async def test_private_file_result_uploads_private_file(drive_plugins_dir, monke
         ).with_text("文件已上传")
         h.assert_api("get_group_root_files").not_called()
         h.assert_api("upload_group_file").not_called()
+
+
+async def test_private_usage_question_returns_usage_text(drive_plugins_dir):
+    """PL-56: 私聊发送 '使用方法。' → 返回 drive_bot 使用说明"""
+    async with PluginTestHarness(
+        plugin_names=[PLUGIN_NAME], plugins_dir=drive_plugins_dir
+    ) as h:
+        await h.inject(private_message("使用方法。", user_id=USER_ID))
+        await h.settle(0.1)
+
+        h.assert_api("send_private_msg").called().with_params(
+            user_id=USER_ID
+        ).with_text("Drive Bot 使用方法", "/jm 关键词", "/jm 数字ID", "每日新闻")
+
+
+async def test_private_jm_download_failure_returns_error_text(
+    drive_plugins_dir, monkeypatch
+):
+    """PL-57: JM PDF 未生成等下载失败 → 回复错误文本，不抛出 handler 异常"""
+    async with PluginTestHarness(
+        plugin_names=[PLUGIN_NAME], plugins_dir=drive_plugins_dir
+    ) as h:
+        module = importlib.import_module("utils.msg_parser")
+
+        def fake_jmcomic_crawler(jm_number, logger):
+            raise RuntimeError("JM 下载完成，但未生成 PDF 文件，请检查 img2pdf 依赖")
+
+        monkeypatch.setattr(module, "jmcomic_crawler", fake_jmcomic_crawler)
+
+        await h.inject(private_message("/jm 1429682", user_id=USER_ID))
+        await h.settle(0.1)
+
+        h.assert_api("send_private_msg").called().with_params(
+            user_id=USER_ID
+        ).with_text("JM 下载失败", "img2pdf")
+        h.assert_api("upload_private_file").not_called()
+
+
+def test_jmcomic_crawler_raises_when_pdf_missing(tmp_path, monkeypatch):
+    """PL-58: JM 下载完成但未生成 PDF → 抛 RuntimeError 而不是 UnboundLocalError"""
+    project_code_dir = Path(__file__).resolve().parents[3] / "code"
+    monkeypatch.syspath_prepend(str(project_code_dir))
+    module = importlib.import_module("utils.jmcomic_crawler")
+
+    class FakeLogger:
+        def info(self, *args):
+            pass
+
+        def debug(self, *args):
+            pass
+
+        def warning(self, *args):
+            pass
+
+    monkeypatch.setattr(module, "PDF_DIR", str(tmp_path))
+    monkeypatch.setattr(module.jmcomic, "create_option_by_str", lambda *args, **kw: {})
+    monkeypatch.setattr(module.jmcomic, "download_album", lambda *args, **kw: None)
+
+    with pytest.raises(RuntimeError, match="未生成 PDF"):
+        module.jmcomic_crawler(1429682, FakeLogger())

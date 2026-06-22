@@ -70,6 +70,9 @@
 |---------|------|--------|
 | PL-54 | 私聊每日新闻 | direct_upload 结果 → `send_private_msg` 图片回复 |
 | PL-55 | 私聊文件结果 | upload_file 结果 → `upload_private_file`，不走群文件夹 |
+| PL-56 | 私聊询问使用方法 | "使用方法。" → 返回 drive_bot 使用说明 |
+| PL-57 | JM 下载失败 | PDF 未生成等异常 → 返回错误文本，不抛出 handler 异常 |
+| PL-58 | JM 下载完成但 PDF 缺失 | `jmcomic_crawler` 抛出明确 RuntimeError，不再触发 UnboundLocalError |
 
 ## 人工验收
 

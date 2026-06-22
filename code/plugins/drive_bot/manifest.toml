@@ -6,6 +6,7 @@ description = "Drive group helper migrated from code/main.py"
 entry_class = "DriveBotPlugin"
 pip_dependencies = [
   "jmcomic",
+  "img2pdf",
   "Pillow",
   "requests",
   "aiohttp",

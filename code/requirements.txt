@@ -1,5 +1,6 @@
 ncatbot5>=5.5.6
 jmcomic
+img2pdf
 Pillow
 requests
 aiohttp
