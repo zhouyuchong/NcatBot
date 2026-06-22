@@ -9,6 +9,7 @@ LastEditTime: 2026-06-22 13:47:25
 
 import sys
 from pathlib import Path
+from typing import Any
 
 from ncatbot.core import registrar
 from ncatbot.event.qq import GroupMessageEvent, PrivateMessageEvent
@@ -19,6 +20,20 @@ if str(PROJECT_DIR) not in sys.path:
     sys.path.insert(0, str(PROJECT_DIR))
 
 from utils.msg_parser import message_parser  # noqa: E402
+
+
+def _answer_files(answer: dict[str, Any]) -> list[dict[str, str]]:
+    if "files" in answer:
+        return list(answer["files"])
+    return [{"file_name": answer["file_name"], "file_path": answer["file_path"]}]
+
+
+def _delete_uploaded_file(file_path: str, logger) -> None:
+    try:
+        Path(file_path).unlink(missing_ok=True)
+        logger.debug("已删除上传后的文件: %s", file_path)
+    except Exception as exc:
+        logger.warning("删除上传后的文件失败: %s", exc)
 
 
 class DriveBotPlugin(NcatBotPlugin):
@@ -54,12 +69,14 @@ class DriveBotPlugin(NcatBotPlugin):
                 event.group_id,
                 answer["upload_folder_name"],
             )
-            await self.api.qq.file.upload_group_file(
-                group_id=event.group_id,
-                file=answer["file_path"],
-                name=answer["file_name"],
-                folder_id=folder_id,
-            )
+            for item in _answer_files(answer):
+                await self.api.qq.file.upload_group_file(
+                    group_id=event.group_id,
+                    file=item["file_path"],
+                    name=item["file_name"],
+                    folder_id=folder_id,
+                )
+                _delete_uploaded_file(item["file_path"], self.logger)
             await event.reply(text=answer["text"])
             return
 
@@ -91,11 +108,13 @@ class DriveBotPlugin(NcatBotPlugin):
             return
 
         if answer["upload_file"]:
-            await self.api.qq.file.upload_private_file(
-                user_id=event.user_id,
-                file=answer["file_path"],
-                name=answer["file_name"],
-            )
+            for item in _answer_files(answer):
+                await self.api.qq.file.upload_private_file(
+                    user_id=event.user_id,
+                    file=item["file_path"],
+                    name=item["file_name"],
+                )
+                _delete_uploaded_file(item["file_path"], self.logger)
             await event.reply(text=answer["text"])
             return
 

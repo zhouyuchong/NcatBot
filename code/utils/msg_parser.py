@@ -41,14 +41,16 @@ async def message_parser(msg, last_time, logger):
             # jm_result = re.match(JMCOMIC_PATTERN, jm_result)
             jm_number = int(after_jm)
             try:
-                file_name, file_path = jmcomic_crawler(jm_number, logger)
+                files = jmcomic_crawler(jm_number, logger)
             except Exception as exc:
                 logger.error(f"jm download error: {exc}")
                 return_msg["text"] = f"JM 下载失败：{exc}"
                 return_msg["updated_time"] = last_time
                 return return_msg
-            return_msg["file_name"] = file_name
-            return_msg["file_path"] = file_path
+            return_msg["files"] = files
+            if len(files) == 1:
+                return_msg["file_name"] = files[0]["file_name"]
+                return_msg["file_path"] = files[0]["file_path"]
             return_msg["upload_file"] = True
             return_msg["upload_folder_name"] = "本子"
             return_msg["text"] = "文件已上传"

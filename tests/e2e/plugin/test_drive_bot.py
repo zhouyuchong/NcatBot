@@ -7,6 +7,8 @@ drive_bot 插件离线测试
   PL-56: 私聊询问使用方法 → 返回使用说明
   PL-57: JM 下载失败 → 返回错误提示
   PL-58: JM 下载完成但 PDF 缺失 → 抛出明确错误
+  PL-59: JM 多章节 PDF → 逐个上传并删除
+  PL-60: JM crawler 返回多个 PDF 文件
 """
 
 from __future__ import annotations
@@ -107,6 +109,47 @@ async def test_private_file_result_uploads_private_file(drive_plugins_dir, monke
         h.assert_api("upload_group_file").not_called()
 
 
+async def test_private_multi_pdf_uploads_each_file_and_deletes(
+    drive_plugins_dir, monkeypatch, tmp_path
+):
+    """PL-59: 多个章节 PDF → 私聊逐个上传，上传成功一个删除一个"""
+    files = []
+    for index in range(2):
+        path = tmp_path / f"chapter-{index + 1}.pdf"
+        path.write_bytes(b"%PDF-1.4")
+        files.append({"file_name": path.name, "file_path": str(path)})
+
+    async with PluginTestHarness(
+        plugin_names=[PLUGIN_NAME], plugins_dir=drive_plugins_dir
+    ) as h:
+        plugin = h.get_plugin(PLUGIN_NAME)
+        _patch_message_parser(
+            plugin,
+            monkeypatch,
+            {
+                "text": "文件已上传",
+                "upload_file": True,
+                "direct_upload": False,
+                "upload_folder_name": "本子",
+                "files": files,
+                "updated_time": 789,
+            },
+        )
+
+        await h.inject(private_message("/jm 1194365", user_id=USER_ID))
+        await h.settle(0.1)
+
+        upload_calls = h.assert_api("upload_private_file").calls
+        assert [call.params["name"] for call in upload_calls] == [
+            "chapter-1.pdf",
+            "chapter-2.pdf",
+        ]
+        assert all(not Path(item["file_path"]).exists() for item in files)
+        h.assert_api("send_private_msg").called().with_params(
+            user_id=USER_ID
+        ).with_text("文件已上传")
+
+
 async def test_private_usage_question_returns_usage_text(drive_plugins_dir):
     """PL-56: 私聊发送 '使用方法。' → 返回 drive_bot 使用说明"""
     async with PluginTestHarness(
@@ -165,3 +208,35 @@ def test_jmcomic_crawler_raises_when_pdf_missing(tmp_path, monkeypatch):
 
     with pytest.raises(RuntimeError, match="未生成 PDF"):
         module.jmcomic_crawler(1429682, FakeLogger())
+
+
+def test_jmcomic_crawler_returns_multiple_pdf_files(tmp_path, monkeypatch):
+    """PL-60: JM 下载生成多个章节 PDF → 返回 files 列表"""
+    project_code_dir = Path(__file__).resolve().parents[3] / "code"
+    monkeypatch.syspath_prepend(str(project_code_dir))
+    module = importlib.import_module("utils.jmcomic_crawler")
+
+    class FakeLogger:
+        def info(self, *args):
+            pass
+
+        def debug(self, *args):
+            pass
+
+        def warning(self, *args):
+            pass
+
+    def fake_download_album(*args, **kwargs):
+        (tmp_path / "002.pdf").write_bytes(b"%PDF-1.4")
+        (tmp_path / "001.pdf").write_bytes(b"%PDF-1.4")
+
+    monkeypatch.setattr(module, "PDF_DIR", str(tmp_path))
+    monkeypatch.setattr(module.jmcomic, "create_option_by_str", lambda *args, **kw: {})
+    monkeypatch.setattr(module.jmcomic, "download_album", fake_download_album)
+
+    result = module.jmcomic_crawler(1194365, FakeLogger())
+
+    assert result == [
+        {"file_name": "001.pdf", "file_path": str(tmp_path / "001.pdf")},
+        {"file_name": "002.pdf", "file_path": str(tmp_path / "002.pdf")},
+    ]

@@ -37,9 +37,10 @@ def jmcomic_crawler(jm_number, logger):
             "JM 下载完成，但未生成 PDF 文件，请检查 img2pdf 依赖是否已安装"
         )
 
-    pdf_file = pdf_files[0]
-    pdf_path = os.path.join(PDF_DIR, pdf_file)
-    return pdf_file, pdf_path
+    return [
+        {"file_name": pdf_file, "file_path": os.path.join(PDF_DIR, pdf_file)}
+        for pdf_file in sorted(pdf_files)
+    ]
 
 
 def delete_files_in_directory(target_path, logger):

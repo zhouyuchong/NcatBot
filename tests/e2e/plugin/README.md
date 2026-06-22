@@ -73,6 +73,8 @@
 | PL-56 | 私聊询问使用方法 | "使用方法。" → 返回 drive_bot 使用说明 |
 | PL-57 | JM 下载失败 | PDF 未生成等异常 → 返回错误文本，不抛出 handler 异常 |
 | PL-58 | JM 下载完成但 PDF 缺失 | `jmcomic_crawler` 抛出明确 RuntimeError，不再触发 UnboundLocalError |
+| PL-59 | JM 多章节 PDF 上传 | 多个 PDF 逐个上传，上传成功后立即删除本地文件 |
+| PL-60 | JM crawler 多 PDF 返回 | 多个章节 PDF 按文件名排序返回 `files` 列表 |
 
 ## 人工验收
 
