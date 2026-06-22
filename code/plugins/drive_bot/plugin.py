@@ -53,7 +53,7 @@ class DriveBotPlugin(NcatBotPlugin):
 
         self.logger.info(event)
         answer = await message_parser(
-            msg=event.raw_message,
+            msg=event.message.text,
             last_time=self._last_request_time,
             logger=self.logger,
         )

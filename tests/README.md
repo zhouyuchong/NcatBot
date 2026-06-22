@@ -20,7 +20,7 @@ tests/
 ├── integration/       # 集成测试 (I-01 ~ I-21, WUI-I-01 ~ WUI-I-04)
 ├── e2e/               # 端到端测试
 │   ├── test_bot_client.py  # BotClient E2E (B-01 ~ B-05)
-│   ├── plugin/        # 插件离线 E2E (PL-01 ~ PL-61, PL-MR-01 ~ PL-MR-04)
+│   ├── plugin/        # 插件离线 E2E (PL-01 ~ PL-62, PL-MR-01 ~ PL-MR-04)
 │   ├── test_webui_e2e.py  # WebUI E2E (WUI-E2E-01)
 │   └── napcat/        # NapCat 真实连接 E2E (NC-01 ~ NC-21)
 └── fixtures/          # 共享测试数据
@@ -82,7 +82,7 @@ python tests/e2e/napcat/run.py
 | M | Plugin Mixin | M-01 ~ M-41, M-50 ~ M-59 |
 | I | Integration | I-01 ~ I-22 |
 | B | BotClient E2E | B-01 ~ B-05 |
-| PL | Plugin E2E | PL-01 ~ PL-61 |
+| PL | Plugin E2E | PL-01 ~ PL-62 |
 | PL-MR | 插件手动热重载 / 加载卸载 E2E | PL-MR-01 ~ PL-MR-04 |
 | NC | NapCat E2E | NC-01 ~ NC-21 |
 | SC | RBAC 权限系统 | SC-01 ~ SC-12 |

@@ -10,6 +10,7 @@ drive_bot 插件离线测试
   PL-59: JM 多章节 PDF → 逐个上传并删除
   PL-60: JM crawler 返回多个 PDF 文件
   PL-61: JM 章节 PDF 命名包含 album id / 漫画名 / 章节序号
+  PL-62: 群聊 at 机器人询问使用方法 → 去掉 at 段后返回使用说明
 """
 
 from __future__ import annotations
@@ -20,7 +21,7 @@ from pathlib import Path
 import pytest
 
 from ncatbot.testing import PluginTestHarness
-from ncatbot.testing.factories.qq import private_message
+from ncatbot.testing.factories.qq import group_message, private_message
 
 
 PLUGIN_NAME = "drive_bot"
@@ -161,6 +162,32 @@ async def test_private_usage_question_returns_usage_text(drive_plugins_dir):
 
         h.assert_api("send_private_msg").called().with_params(
             user_id=USER_ID
+        ).with_text("Drive Bot 使用方法", "/jm 关键词", "/jm 数字ID", "每日新闻")
+
+
+async def test_group_usage_question_after_at_returns_usage_text(drive_plugins_dir):
+    """PL-62: 群聊 at 机器人发送 '使用方法' → 返回 drive_bot 使用说明"""
+    self_id = "10001"
+    async with PluginTestHarness(
+        plugin_names=[PLUGIN_NAME], plugins_dir=drive_plugins_dir
+    ) as h:
+        await h.inject(
+            group_message(
+                "使用方法",
+                group_id="1019587647",
+                user_id=USER_ID,
+                self_id=self_id,
+                raw_message=f"[CQ:at,qq={self_id}] 使用方法",
+                message=[
+                    {"type": "at", "data": {"qq": self_id}},
+                    {"type": "text", "data": {"text": " 使用方法"}},
+                ],
+            )
+        )
+        await h.settle(0.1)
+
+        h.assert_api("send_group_msg").called().with_params(
+            group_id="1019587647"
         ).with_text("Drive Bot 使用方法", "/jm 关键词", "/jm 数字ID", "每日新闻")
 
 
