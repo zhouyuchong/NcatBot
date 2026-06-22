@@ -1,4 +1,11 @@
-"""Drive group helper plugin."""
+"""Drive group helper plugin.
+
+Author: zhouyuchong
+Date: 2026-06-22 13:01:18
+Description:
+LastEditors: zhouyuchong
+LastEditTime: 2026-06-22 13:47:25
+"""
 
 import sys
 from pathlib import Path
@@ -11,7 +18,7 @@ PROJECT_DIR = Path(__file__).resolve().parents[2]
 if str(PROJECT_DIR) not in sys.path:
     sys.path.insert(0, str(PROJECT_DIR))
 
-from utils.msg_parser import message_parser
+from utils.msg_parser import message_parser  # noqa: E402
 
 
 class DriveBotPlugin(NcatBotPlugin):
@@ -60,4 +67,36 @@ class DriveBotPlugin(NcatBotPlugin):
 
     @registrar.qq.on_private_message()
     async def on_private_message(self, event: PrivateMessageEvent) -> None:
+        """
+        Handle private messages sent to the bot.
+        """
+        """data format :
+        private msg: PrivateMessageEvent(data=PrivateMessageEventData(time=1782106570, self_id='1706895031',
+        post_type=<PostType.MESSAGE: 'message'>, platform='qq', message_type=<MessageType.PRIVATE: 'private'>,
+        sub_type='friend', message_id='1147773616', user_id='1620404337', message=MessageArray([PlainText(text='在')]),
+        raw_message='在', sender=QQSender(user_id='1620404337', nickname='DamonZzz', sex='unknown', age=0), font=14, message_seq=1147773616,
+        real_id='1147773616', real_seq='70', message_format='array', target_id='1620404337'))
+        """
         self.logger.info("private msg: %s", event)
+        answer = await message_parser(
+            msg=event.raw_message,
+            last_time=self._last_request_time,
+            logger=self.logger,
+        )
+        self.logger.info(answer)
+        self._last_request_time = answer["updated_time"]
+
+        if answer["direct_upload"]:
+            await event.reply(text=answer["text"], image=answer["file_path"])
+            return
+
+        if answer["upload_file"]:
+            await self.api.qq.file.upload_private_file(
+                user_id=event.user_id,
+                file=answer["file_path"],
+                name=answer["file_name"],
+            )
+            await event.reply(text=answer["text"])
+            return
+
+        await event.reply(text=answer["text"])

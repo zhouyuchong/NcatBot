@@ -64,6 +64,13 @@
 | PL-52 | Config/Data | 加载后 config 有默认值，data 有初始化结构 |
 | PL-53 | 帮助/关键词/配置 | "帮助" / 关键词管理 / "查看配置" 命令 |
 
+### drive_bot (`test_drive_bot.py`)
+
+| 规范 ID | 说明 | 验证点 |
+|---------|------|--------|
+| PL-54 | 私聊每日新闻 | direct_upload 结果 → `send_private_msg` 图片回复 |
+| PL-55 | 私聊文件结果 | upload_file 结果 → `upload_private_file`，不走群文件夹 |
+
 ## 人工验收
 
 除自动化测试外，插件还可通过 `run.py` 进行人工验收，详见 [../README.md](../README.md)。
