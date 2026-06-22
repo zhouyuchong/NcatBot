@@ -14,6 +14,7 @@ drive_bot 插件离线测试
   PL-63: 未知私聊消息 → AI 兜底回复
   PL-64: 已有关键词命中 → 不调用 AI 兜底
   PL-65: AI 兜底依赖声明包含 litellm
+  PL-66: AI 兜底 system prompt 接入 neko-on-everything skill
 """
 
 from __future__ import annotations
@@ -217,6 +218,11 @@ async def test_private_unknown_message_uses_ai_fallback(drive_plugins_dir, monke
     monkeypatch.setenv("DRIVE_BOT_AI_API_KEY", "env-test-key")
 
     async def fake_chat_text(self, content_or_messages, **kwargs):
+        assert content_or_messages[0]["role"] == "system"
+        system_prompt = content_or_messages[0]["content"]
+        assert "Drive Bot roleplay skill" in system_prompt
+        assert "neko-on-everything" in system_prompt
+        assert "references/persona.md" in system_prompt
         assert content_or_messages[-1] == {
             "role": "user",
             "content": "今天适合干什么",

@@ -7,8 +7,9 @@ LastEditors: zhouyuchong
 LastEditTime: 2026-06-22 13:47:25
 """
 
-import sys
 import os
+import sys
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -26,6 +27,14 @@ AI_FALLBACK_TRIGGER_TEXT = "无法理解喵"
 AI_SYSTEM_PROMPT = (
     "你是一个接入 QQ 的轻量助手。请用简洁、自然的中文回复用户，"
     "不要假装自己能上传文件或执行插件命令。"
+)
+NEKO_SKILL_DIR = PROJECT_DIR / "skills" / "neko-on-everything"
+NEKO_SKILL_FILES = (
+    "SKILL.md",
+    "references/persona.md",
+    "references/avatars/code.md",
+    "references/avatars/life.md",
+    "references/avatars/math.md",
 )
 
 
@@ -54,6 +63,25 @@ def _env_or_config(env_name: str, config_value: Any) -> Any:
     if value is not None and value.strip():
         return value.strip()
     return config_value
+
+
+@lru_cache(maxsize=1)
+def _load_neko_skill_prompt() -> str:
+    parts = []
+    for relative_path in NEKO_SKILL_FILES:
+        path = NEKO_SKILL_DIR / relative_path
+        if path.exists():
+            parts.append(path.read_text(encoding="utf-8").strip())
+    if not parts:
+        return ""
+    return "\n\n".join(["Drive Bot roleplay skill:", *parts])
+
+
+def _build_ai_system_prompt() -> str:
+    skill_prompt = _load_neko_skill_prompt()
+    if not skill_prompt:
+        return AI_SYSTEM_PROMPT
+    return f"{AI_SYSTEM_PROMPT}\n\n{skill_prompt}"
 
 
 class DriveBotPlugin(NcatBotPlugin):
@@ -176,7 +204,7 @@ class DriveBotPlugin(NcatBotPlugin):
 
     async def _ask_ai(self, prompt: str) -> str:
         messages = [
-            {"role": "system", "content": AI_SYSTEM_PROMPT},
+            {"role": "system", "content": _build_ai_system_prompt()},
             {"role": "user", "content": prompt.strip()},
         ]
         model = _env_or_config("DRIVE_BOT_AI_MODEL", self.get_config("ai_model"))

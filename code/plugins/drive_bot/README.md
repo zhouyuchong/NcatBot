@@ -14,6 +14,8 @@ DRIVE_BOT_AI_MAX_TOKENS=800
 
 `fake-api-key` 仅用于离线测试；实际使用时请改为可用的 API Key。
 
+AI 兜底会自动加载 `code/skills/neko-on-everything/`，把其中的轻量角色扮演 prompt 注入 system message。这个 skill 只提供回复风格约束，不安装依赖，也不写入长期记忆。
+
 ## 依赖
 
 JM 下载并生成 PDF 需要安装：
