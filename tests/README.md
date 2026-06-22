@@ -7,7 +7,7 @@
 ```
 tests/
 ├── unit/              # 单元测试 — 按模块组织
-│   ├── types/         # 类型系统 (T-01 ~ T-05, S-01 ~ S-10, CQ-01 ~ CQ-08, N-01 ~ N-05, MA-01 ~ MA-04, FW-01 ~ FW-03, SEG-01, LR-01 ~ LR-03, VI-01 ~ VI-05)
+│   ├── types/         # 类型系统 (T-01 ~ T-05, S-01 ~ S-10, CQ-01 ~ CQ-08, N-01 ~ N-06, MA-01 ~ MA-04, FW-01 ~ FW-03, SEG-01, LR-01 ~ LR-03, VI-01 ~ VI-05)
 │   ├── event/         # 事件工厂 (E-01 ~ E-04, GHE-01 ~ GHE-04, LKE-01 ~ LKE-08, QMA-01 ~ QMA-03)
 │   ├── api/           # API 客户端 + 错误层级 + Sugar (A-01 ~ A-02, AE-01 ~ AE-07, SG-01 ~ SG-06, FL-01 ~ FL-06)
 │   ├── core/          # 核心分发与注册 + 谓词 (D-01 ~ D-09, K-01 ~ K-21, H-01 ~ H-11, R-01 ~ R-09, PR-01 ~ PR-06)
@@ -63,7 +63,7 @@ python tests/e2e/napcat/run.py
 | T | Types / Segments | T-01 ~ T-05 |
 | S | Segment 解析 (parse_segment) | S-01 ~ S-10 |
 | CQ | CQ 码解析 | CQ-01 ~ CQ-08 |
-| N | NapCat 类型模型 | N-01 ~ N-05 |
+| N | NapCat 类型模型 | N-01 ~ N-06 |
 | E | Event Entity / Factory | E-01 ~ E-04 |
 | A | API Client | A-01 ~ A-02 |
 | AE | API Errors | AE-01 ~ AE-07 |

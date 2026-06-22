@@ -62,6 +62,7 @@
 | N-03 | 允许额外字段 | 未知字段不报错 |
 | N-04 | `SendMessageResult` | 正确解析 `message_id` |
 | N-05 | 各模型基本构造 | 20+ 种 NapCat 模型均可正常实例化 |
+| N-06 | 群文件列表 ID 兼容 | `uploader` / `creator` 可接收 `int` 并转为 `str` |
 
 ### MessageArray 容器 (`test_message_array.py`)
 

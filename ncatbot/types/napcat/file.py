@@ -2,9 +2,16 @@
 
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import Any, List, Optional
 
+from pydantic import field_validator
 from ._base import NapCatModel
+
+
+def _coerce_optional_str(value: Any) -> Any:
+    if isinstance(value, (int, float)):
+        return str(int(value))
+    return value
 
 
 class GroupFileSystemInfo(NapCatModel):
@@ -38,6 +45,11 @@ class GroupFileInfo(NapCatModel):
     uploader: str = ""
     uploader_name: Optional[str] = None
 
+    @field_validator("uploader", mode="before")
+    @classmethod
+    def _coerce_uploader(cls, value: Any) -> Any:
+        return _coerce_optional_str(value)
+
 
 class GroupFolderInfo(NapCatModel):
     """群文件夹信息
@@ -54,6 +66,11 @@ class GroupFolderInfo(NapCatModel):
     creator_name: Optional[str] = None
     total_file_count: Optional[int] = None
 
+    @field_validator("creator", mode="before")
+    @classmethod
+    def _coerce_creator(cls, value: Any) -> Any:
+        return _coerce_optional_str(value)
+
 
 class CreateFolderResultItem(NapCatModel):
     """create_group_file_folder 返回的文件夹详情（camelCase 格式）"""
@@ -66,6 +83,11 @@ class CreateFolderResultItem(NapCatModel):
     createUin: Optional[str] = None
     creatorName: Optional[str] = None
     totalFileCount: Optional[int] = None
+
+    @field_validator("createUin", mode="before")
+    @classmethod
+    def _coerce_create_uin(cls, value: Any) -> Any:
+        return _coerce_optional_str(value)
 
 
 class CreateFolderResultGroupItem(NapCatModel):
