@@ -13,11 +13,13 @@ drive_bot 插件离线测试
   PL-62: 群聊 at 机器人询问使用方法 → 去掉 at 段后返回使用说明
   PL-63: 未知私聊消息 → AI 兜底回复
   PL-64: 已有关键词命中 → 不调用 AI 兜底
+  PL-65: AI 兜底依赖声明包含 litellm
 """
 
 from __future__ import annotations
 
 import importlib
+import tomllib
 from pathlib import Path
 
 import pytest
@@ -42,6 +44,18 @@ def _patch_message_parser(plugin, monkeypatch, answer):
         return dict(answer)
 
     monkeypatch.setattr(module, "message_parser", fake_message_parser)
+
+
+def test_drive_bot_declares_litellm_dependency(drive_plugins_dir):
+    """PL-65: manifest.toml 和 code/requirements.txt 均声明 AI 兜底所需 litellm"""
+    plugin_dir = drive_plugins_dir / PLUGIN_NAME
+    manifest = tomllib.loads((plugin_dir / "manifest.toml").read_text(encoding="utf-8"))
+    assert any(dep.startswith("litellm") for dep in manifest["pip_dependencies"])
+
+    requirements = (
+        Path(__file__).resolve().parents[3] / "code" / "requirements.txt"
+    ).read_text(encoding="utf-8")
+    assert "litellm" in requirements
 
 
 async def test_private_daily_news_replies_with_image(drive_plugins_dir, monkeypatch):

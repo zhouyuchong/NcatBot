@@ -4,3 +4,4 @@ img2pdf
 Pillow
 requests
 aiohttp
+litellm>=1.83.0
