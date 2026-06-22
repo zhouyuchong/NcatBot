@@ -40,7 +40,7 @@ JMCOMIC_OPTION = {
                 "plugin": "img2pdf",
                 "kwargs": {
                     "pdf_dir": "./pdf",  # pdf存放文件夹
-                    "filename_rule": "Pid",
+                    "filename_rule": "{Aalbum_id}-{Aname}-{Psort}",
                 },
             }
         ]

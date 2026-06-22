@@ -9,6 +9,7 @@ drive_bot 插件离线测试
   PL-58: JM 下载完成但 PDF 缺失 → 抛出明确错误
   PL-59: JM 多章节 PDF → 逐个上传并删除
   PL-60: JM crawler 返回多个 PDF 文件
+  PL-61: JM 章节 PDF 命名包含 album id / 漫画名 / 章节序号
 """
 
 from __future__ import annotations
@@ -240,3 +241,18 @@ def test_jmcomic_crawler_returns_multiple_pdf_files(tmp_path, monkeypatch):
         {"file_name": "001.pdf", "file_path": str(tmp_path / "001.pdf")},
         {"file_name": "002.pdf", "file_path": str(tmp_path / "002.pdf")},
     ]
+
+
+def test_jmcomic_pdf_filename_rule_contains_album_title_and_chapter():
+    """PL-61: JM 章节 PDF 文件名规则为 id-名称-章节.pdf"""
+    project_code_dir = Path(__file__).resolve().parents[3] / "code"
+    import sys
+
+    if str(project_code_dir) not in sys.path:
+        sys.path.insert(0, str(project_code_dir))
+    constants = importlib.import_module("utils.constants")
+
+    rule = constants.JMCOMIC_OPTION["plugins"]["after_photo"][0]["kwargs"][
+        "filename_rule"
+    ]
+    assert rule == "{Aalbum_id}-{Aname}-{Psort}"
